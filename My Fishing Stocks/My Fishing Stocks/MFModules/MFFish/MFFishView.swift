@@ -2,14 +2,36 @@
 //  MFFishView.swift
 //  My Fishing Stocks
 //
-//  Created by Dias Atudinov on 26.01.2026.
 //
 
 import SwiftUI
 
 struct MFFishView: View {
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        ScreenContainer(
+            topBar: .init(
+                title: "Профиль",
+                leading: .init(systemImage: "arrow.left", action: { print("back") })
+            )
+        ) {
+            ScrollView(showsIndicators: false) {
+                VStack {
+                    Image(.fishIconMF)
+                        .resizable()
+                        .scaledToFit()
+                        .padding(.top)
+                        .padding(.horizontal, 50)
+                    
+                    
+                }
+                .padding(.bottom, 150)
+            }
+        }
+        .background(
+            Image(.appBgMF)
+                .resizable()
+                .scaledToFill()
+        )
     }
 }
 

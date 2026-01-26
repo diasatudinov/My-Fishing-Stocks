@@ -1,7 +1,14 @@
+//
+//  UIApplication.swift
+//  My Fishing Stocks
+//
+//
+
+
 import UIKit
 import SwiftUI
 
-struct UIApplication {
+extension UIApplication {
     func hideKeyboard() {
         sendAction(#selector(UIResponder.resignFirstResponder),
                    to: nil,

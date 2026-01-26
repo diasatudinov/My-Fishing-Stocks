@@ -1,3 +1,11 @@
+//
+//  ScreenContainer.swift
+//  My Fishing Stocks
+//
+//
+
+import SwiftUI
+
 struct ScreenContainer<Content: View>: View {
     let topBar: TopBarConfig
     let content: Content
@@ -13,7 +21,6 @@ struct ScreenContainer<Content: View>: View {
 
             content
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color(.systemBackground))
         }
     }
 }

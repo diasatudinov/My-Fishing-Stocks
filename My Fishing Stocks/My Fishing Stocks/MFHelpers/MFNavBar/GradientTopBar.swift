@@ -50,7 +50,3 @@ struct GradientTopBar: View {
         }
     }
 }
-
-#Preview {
-    MFFishView()
-}

@@ -19,7 +19,7 @@ struct VQMenuContainer: View {
 
 struct VQMenuView: View {
     @State var selectedTab = 0
-//    @StateObject var viewModel = VQProjectViewModel()
+    @StateObject var viewModel = MFFishViewModel()
     private let tabs = ["", "",""]
     
     var body: some View {
@@ -29,7 +29,7 @@ struct VQMenuView: View {
             case 0:
                 Color.red
             case 1:
-                Color.green
+                MFFishView(viewModel: viewModel)
             case 2:
                 Color.yellow
             default:
@@ -103,5 +103,5 @@ struct VQMenuView: View {
 }
 
 #Preview {
-    VQMenuView()
+    VQMenuContainer()
 }

@@ -10,7 +10,8 @@ import SwiftUI
 struct TopBarConfig {
     var title: String
     var leading: BarItem? = nil
-
+    var trailing: BarItem? = nil
+    
     struct BarItem: Identifiable {
         let id = UUID()
         var systemImage: String

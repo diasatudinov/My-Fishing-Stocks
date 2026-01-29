@@ -34,7 +34,11 @@ struct GradientTopBar: View {
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity, alignment: .center)
             
-            Color.clear.frame(width: 44, height: 44)
+            if let trailing = config.trailing {
+                barButton(trailing)
+            } else {
+                Color.clear.frame(width: 44, height: 44)
+            }
         }
         .padding(.horizontal, 16)
         .background(Gradients.navBar.color)

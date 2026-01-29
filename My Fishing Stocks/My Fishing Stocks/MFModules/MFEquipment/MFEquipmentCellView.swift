@@ -1,18 +1,17 @@
 //
-//  MFFishCellView.swift
+//  MFEquipmentCellView.swift
 //  My Fishing Stocks
 //
-//  Created by Dias Atudinov on 29.01.2026.
 //
 
 
 import SwiftUI
 
-struct MFFishCellView: View {
-    let fish: MFFish
+struct MFEquipmentCellView: View {
+    let equipment: MFEquipment
     var body: some View {
         VStack(spacing: 8) {
-            if let image = fish.image {
+            if let image = equipment.image {
                 Image(uiImage: image)
                     .resizable()
                     .scaledToFill()
@@ -40,20 +39,15 @@ struct MFFishCellView: View {
             }
             
             VStack(spacing: 12) {
-                HStack(spacing: 20) {
-                    Text(fish.type)
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundStyle(.black)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    Text("\(fish.quantity)pcs")
-                        .font(.system(size: 15, weight: .regular))
-                        .foregroundStyle(.black)
-                    
-                }
-                
-                Text(fish.age.text)
-                    .font(.system(size: 11, weight: .regular))
+                Text(equipment.name)
+                    .font(.system(size: 16, weight: .semibold))
                     .foregroundStyle(.black)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                
+                
+                Text("\(equipment.status.text)")
+                    .font(.system(size: 11, weight: .regular))
+                    .foregroundStyle(equipment.status.color)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
             
@@ -67,5 +61,6 @@ struct MFFishCellView: View {
 }
 
 #Preview {
-    MFFishCellView(fish: MFFish(type: "Corp", quantity: 1200, age: .fattening, operations: [], note: "For fattening", imageData: nil))
+    MFEquipmentCellView(equipment: MFEquipment(name: "Grundfos pump", type: .aerator, status: .repeir, frequency: 2, operations: [], note: "Nominal flow rate: 4.58 m³/h\nNominal head: 4.8 m", date: .now)
+    )
 }

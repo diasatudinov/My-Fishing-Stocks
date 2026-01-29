@@ -27,11 +27,11 @@ struct VQMenuView: View {
             
             switch selectedTab {
             case 0:
-                Color.red
+                MFStatisticsView(viewModel: viewModel)
             case 1:
                 MFFishView(viewModel: viewModel)
             case 2:
-                Color.yellow
+                MFEquipmentView(viewModel: viewModel)
             default:
                 Text("default")
             }

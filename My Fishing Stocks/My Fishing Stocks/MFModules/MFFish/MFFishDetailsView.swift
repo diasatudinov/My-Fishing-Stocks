@@ -16,7 +16,8 @@ struct MFFishDetailsView: View {
         ScreenContainer(
             topBar: .init(
                 title: "\(fish.type)",
-                leading: .init(systemImage: "arrow.left", action: { dismiss() })
+                leading: .init(systemImage: "arrow.left", action: { dismiss() }),
+                trailing: .init(systemImage: "trash", action: { viewModel.delete(fish: fish); dismiss() })
             )
         ) {
             ScrollView(showsIndicators: false) {

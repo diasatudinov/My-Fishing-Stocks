@@ -1,53 +1,92 @@
+//
+//  FishPopulationChange.swift
+//  My Fishing Stocks
+//
+//
+
+
 import SwiftUI
 import Charts
 
-struct FishPopulationChange: Identifiable {
+struct TotalStepPoint: Identifiable {
     let id = UUID()
-    let date: Date
-    let delta: Int   // +income, -expense
+    let step: Int   // 1...9
+    let total: Int  // общее количество
 }
+//     Dynamics of fish population
+struct FarmTotalLast9StepsChartView: View {
+    @ObservedObject var vm: MFFishViewModel
 
-struct FishLast7ChangesChartView: View {
-    let fish: MFFish
+    private var totalNow: Int {
+        vm.fishes.reduce(0) { $0 + $1.quantity }
+    }
 
-    private var last7: [FishPopulationChange] {
-        fish.operations
-            .sorted { $0.date < $1.date }
-            .suffix(7)
-            .map { op in
-                let delta = (op.status == .income) ? op.quantity : -op.quantity
-                return FishPopulationChange(date: op.date, delta: delta)
-            }
+    private var last9TotalsByStep: [TotalStepPoint] {
+        let ops = vm.fishes.flatMap { $0.operations }   // все операции всех рыб
+        guard !ops.isEmpty else { return [] }
+
+        func delta(_ op: FishOperation) -> Int {
+            op.status == .income ? op.quantity : -op.quantity
+        }
+
+        // Восстанавливаем total до первой операции:
+        // totalNow = totalBeforeFirst + sum(deltas)
+        let sumDeltas = ops.reduce(0) { $0 + delta($1) }
+        var runningTotal = totalNow - sumDeltas
+
+        var totals: [Int] = []
+        totals.reserveCapacity(ops.count)
+
+        for op in ops {
+            runningTotal += delta(op)
+            totals.append(max(0, runningTotal))
+        }
+
+        let last = Array(totals.suffix(9))
+        return last.enumerated().map { idx, total in
+            TotalStepPoint(step: idx + 1, total: total) // 1..9
+        }
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Последние 7 изменений популяции")
-                .font(.headline)
-
-            Chart(last7) { item in
-                BarMark(
-                    x: .value("Дата", item.date),
-                    y: .value("Изменение", item.delta)
-                )
-                // Цвет для +/-
-                .foregroundStyle(item.delta >= 0 ? .green : .red)
-                .cornerRadius(4)
-            }
-            .chartXAxis {
-                AxisMarks(values: .automatic(desiredCount: 7)) { value in
-                    AxisGridLine()
-                    AxisValueLabel(format: .dateTime.day().month(), centered: true)
+            Text("Dynamics of fish population")
+                .font(.system(size: 14, weight: .light))
+                .textCase(.uppercase)
+            
+            if last9TotalsByStep.isEmpty {
+                Text("There are no operations to plot the graph.")
+                    .foregroundStyle(.secondary)
+            } else {
+                Chart(last9TotalsByStep) { item in
+                    BarMark(
+                        x: .value("step", item.step),
+                        y: .value("Total", item.total),
+                        width: .fixed(20)
+                    )
+                    .foregroundStyle(.appPurple)
                 }
-            }
-            .chartYAxis {
-                AxisMarks { _ in
-                    AxisGridLine()
-                    AxisValueLabel()
+                .chartXAxis {
+                    AxisMarks(values: last9TotalsByStep.map(\.step)) { value in
+                        AxisGridLine()
+                        AxisValueLabel()
+                    }
                 }
+                .chartYAxis {
+                    AxisMarks(position: .leading) { _ in   
+                        AxisGridLine()
+                        AxisValueLabel()
+                    }
+                }
+                .chartYScale(domain: 0...max(1, last9TotalsByStep.map(\.total).max() ?? 1))
+                .frame(height: 260)
+                
             }
-            .frame(height: 240)
         }
-        .padding()
+        .padding(.horizontal).padding(.bottom)
     }
+}
+
+#Preview {
+    MFStatisticsView(viewModel: MFFishViewModel())
 }

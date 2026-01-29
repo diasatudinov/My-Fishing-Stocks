@@ -2,26 +2,24 @@
 //  MFNewOperationView.swift
 //  My Fishing Stocks
 //
-//  Created by Dias Atudinov on 29.01.2026.
 //
 
 
 import SwiftUI
 
-struct MFEquipmenNewOperationView: View {
+struct MFEquipmentNewOperationView: View {
     @Environment(\.dismiss) private var dismiss
     @ObservedObject var viewModel: MFFishViewModel
 
-    let fish: MFFish
+    let equipment: MFEquipment
 
     @State private var date: Date = Date.now
-    @State private var quantity: String = ""
-    @State private var status: OperationStatus = .income
+    @State private var work: String = ""
 
     var body: some View {
         ScreenContainer(
             topBar: .init(
-                title: "\(fish.type)",
+                title: "\(equipment.name)",
                 leading: .init(systemImage: "arrow.left", action: { dismiss() })
             )
         ) {
@@ -44,42 +42,9 @@ struct MFEquipmenNewOperationView: View {
                             
                         }
                         
-                        textFiled(title: "Age") {
-                            Menu {
-                                ForEach(OperationStatus.allCases) { status in
-                                    Button {
-                                        self.status = status
-                                    } label: {
-                                        if status == self.status {
-                                            Label(status.text, systemImage: "checkmark")
-                                        } else {
-                                            Text(status.text)
-                                            
-                                        }
-                                    }
-                                }
-                            } label: {
-                                HStack(spacing: 8) {
-                                    Text(self.status.text)
-                                        .font(.system(size: 20, weight: .semibold))
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                    
-                                    Image(systemName: "chevron.down")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(height: 7)
-                                }
-                                .foregroundStyle(.black)
-                                .padding(.vertical, 13).padding(.horizontal, 16)
-                                .background(.white)
-                                .clipShape(RoundedRectangle(cornerRadius: 16))
-                            }
-                        }
-                        
-                        textFiled(title: "Quantity") {
-                            TextField("Quantity", text: $quantity)
+                        textFiled(title: "Type of work") {
+                            TextField("Type of work", text: $work)
                                 .font(.system(size: 20, weight: .semibold))
-                                .keyboardType(.numberPad)
                                 .padding(.vertical, 11).padding(.horizontal, 16)
                                 .background(.white)
                                 .clipShape(RoundedRectangle(cornerRadius: 16))
@@ -98,13 +63,8 @@ struct MFEquipmenNewOperationView: View {
                         
                         Button {
                            
-                            let operation = FishOperation(date: date, status: status, quantity: Int(quantity) ?? 0)
-                            viewModel.addOperation(fish: fish, operation: operation)
-                            if status == .income {
-                                viewModel.plusOperation(fish: fish, quantity: Int(quantity) ?? 0)
-                            } else {
-                                viewModel.minusOperation(fish: fish, quantity: Int(quantity) ?? 0)
-                            }
+                            let operation = EquipmentOperation(date: date, work: work)
+                            viewModel.addOperation(equipment: equipment, operation: operation)
                             dismiss()
                         } label: {
                             Text("Add")
@@ -144,5 +104,5 @@ struct MFEquipmenNewOperationView: View {
 }
 
 #Preview {
-    MFNewOperationView(viewModel: MFFishViewModel(), fish: MFFish(type: "Corp", quantity: 1200, age: .fattening, operations: [FishOperation(date: .now, status: .expense, quantity: 200), FishOperation(date: .now, status: .income, quantity: 400)], note: "For fattasdas", imageData: nil))
+    MFEquipmentNewOperationView(viewModel: MFFishViewModel(), equipment: MFEquipment(name: "Grundfos pump", type: .aerator, status: .use, frequency: 2, operations: [], note: "Nominal flow rate: 4.58 m³/h\nNominal head: 4.8 m", date: .now))
 }

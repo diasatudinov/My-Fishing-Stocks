@@ -48,6 +48,7 @@ enum OperationStatus: String, Codable, CaseIterable, Identifiable {
         }
     }
 }
+
 enum FishAge: String, Codable, CaseIterable, Identifiable {
     case young
     case fattening

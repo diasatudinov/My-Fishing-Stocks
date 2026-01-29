@@ -1,14 +1,13 @@
 //
-//  MFNewFish.swift
+//  MFNewEquipment.swift
 //  My Fishing Stocks
 //
-//  Created by Dias Atudinov on 29.01.2026.
 //
 
 
 import SwiftUI
 
-struct MFNewFish: View {
+struct MFNewEquipment: View {
     @Environment(\.dismiss) private var dismiss
     @ObservedObject var viewModel: MFFishViewModel
     
@@ -16,14 +15,16 @@ struct MFNewFish: View {
     @State private var showingImagePicker = false
 
     @State private var title: String = ""
-    @State private var quantity: String = ""
+    @State private var type: EquipmentType = .other
+    @State private var status: EquipmentStatus = .use
     @State private var note = ""
-    @State private var age: FishAge = .young
-
+    @State private var date: Date = .now
+    @State private var frequency = ""
+    
     var body: some View {
         ScreenContainer(
             topBar: .init(
-                title: "New Fish",
+                title: "New Equipment",
                 leading: .init(systemImage: "arrow.left", action: { dismiss() })
             )
         ) {
@@ -75,7 +76,7 @@ struct MFNewFish: View {
                                     .foregroundStyle(.black)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                 
-                                Text("\(quantity)pcs")
+                                Text("\(status.text)")
                                     .font(.system(size: 16, weight: .semibold))
                                     .foregroundStyle(.black)
                                 
@@ -110,8 +111,8 @@ struct MFNewFish: View {
                     .padding(.horizontal, 34)
                     
                     VStack(spacing: 8) {
-                        textFiled(title: "Type") {
-                            TextField("Type", text: $title)
+                        textFiled(title: "Name") {
+                            TextField("Name", text: $title)
                                 .font(.system(size: 20, weight: .semibold))
                                 .padding(.vertical, 11).padding(.horizontal, 16)
                                 .background(.white)
@@ -127,8 +128,89 @@ struct MFNewFish: View {
                                 }
                         }
                         
-                        textFiled(title: "Quantity") {
-                            TextField("Quantity", text: $quantity)
+                        textFiled(title: "Type") {
+                            Menu {
+                                ForEach(EquipmentType.allCases) { age in
+                                    Button {
+                                        self.type = age
+                                    } label: {
+                                        if age == self.type {
+                                            Label(age.text, systemImage: "checkmark")
+                                        } else {
+                                            Text(age.text)
+                                            
+                                        }
+                                    }
+                                }
+                                
+                            } label: {
+                                HStack(spacing: 8) {
+                                    Text(self.type.text)
+                                        .font(.system(size: 20, weight: .semibold))
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                    
+                                    Image(systemName: "chevron.down")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(height: 7)
+                                }
+                                .foregroundStyle(.black)
+                                .padding(.vertical, 13).padding(.horizontal, 16)
+                                .background(.white)
+                                .clipShape(RoundedRectangle(cornerRadius: 16))
+                            }
+                        }
+                        
+                        textFiled(title: "Status") {
+                            Menu {
+                                ForEach(EquipmentStatus.allCases) { age in
+                                    Button {
+                                        self.status = age
+                                    } label: {
+                                        if age == self.status {
+                                            Label(age.text, systemImage: "checkmark")
+                                        } else {
+                                            Text(age.text)
+                                            
+                                        }
+                                    }
+                                }
+                                
+                            } label: {
+                                HStack(spacing: 8) {
+                                    Text(self.status.text)
+                                        .font(.system(size: 20, weight: .semibold))
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                    
+                                    Image(systemName: "chevron.down")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(height: 7)
+                                }
+                                .foregroundStyle(.black)
+                                .padding(.vertical, 13).padding(.horizontal, 16)
+                                .background(.white)
+                                .clipShape(RoundedRectangle(cornerRadius: 16))
+                            }
+                        }
+                        
+                        textFiled(title: "Date") {
+                                
+                                HStack(alignment: .bottom) {
+                                    DatePicker(
+                                        "",
+                                        selection: $date,
+                                        displayedComponents: .date
+                                    ).labelsHidden()
+                                    
+                                    Spacer()
+                                    
+                                }
+                            
+                        }
+                        
+                        textFiled(title: "Maintenance frequency") {
+                            TextField("Frequency", text: $frequency)
                                 .font(.system(size: 20, weight: .semibold))
                                 .keyboardType(.numberPad)
                                 .padding(.vertical, 11).padding(.horizontal, 16)
@@ -145,42 +227,9 @@ struct MFNewFish: View {
                                 }
                         }
                         
-                        textFiled(title: "Age") {
-                            Menu {
-                                ForEach(FishAge.allCases) { age in
-                                    Button {
-                                        self.age = age
-                                    } label: {
-                                        if age == self.age {
-                                            Label(age.text, systemImage: "checkmark")
-                                        } else {
-                                            Text(age.text)
-                                            
-                                        }
-                                    }
-                                }
-                                
-                            } label: {
-                                HStack(spacing: 8) {
-                                    Text(self.age.text)
-                                        .font(.system(size: 20, weight: .semibold))
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                    
-                                    Image(systemName: "chevron.down")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(height: 7)
-                                }
-                                .foregroundStyle(.black)
-                                .padding(.vertical, 13).padding(.horizontal, 16)
-                                .background(.white)
-                                .clipShape(RoundedRectangle(cornerRadius: 16))
-                            }
-                        }
-                        
                         Button {
-                            let fish = MFFish(type: title, quantity: Int(quantity) ?? 0, age: age, operations: [], note: note, imageData: selectedImage?.jpegData(compressionQuality: 0.7))
-                            viewModel.add(fish)
+                            let equipment = MFEquipment(name: title, type: type, status: status, frequency: Int(frequency) ?? 0, operations: [], note: note, date: date, imageData: selectedImage?.jpegData(compressionQuality: 0.7))
+                            viewModel.add(equipment)
                             dismiss()
                         } label: {
                             Text("Add")
@@ -225,4 +274,8 @@ struct MFNewFish: View {
             content()
         }
     }
+}
+
+#Preview {
+    MFNewEquipment(viewModel: MFFishViewModel())
 }
